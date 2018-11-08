@@ -22,5 +22,6 @@ namespace ProyectManagement.Data
 
         public DbSet<Proyect> Proyects { get; set; } 
         public DbSet<Section> Sections { get; set; }
+        public DbSet<Contributor> Contributors { get; set; }
     }
 }
