@@ -1,9 +1,6 @@
-﻿// Configure bundling and minification for the project.
-// More info at https://go.microsoft.com/fwlink/?LinkId=808241
 [
   {
     "outputFileName": "wwwroot/css/site.min.css",
-    // An array of relative input file paths. Globbing patterns supported
     "inputFiles": [
       "wwwroot/css/site.css"
     ]
@@ -13,12 +10,94 @@
     "inputFiles": [
       "wwwroot/js/site.js"
     ],
-    // Optionally specify minification options
     "minify": {
       "enabled": true,
       "renameLocals": true
-    },
-    // Optionally generate .map file
-    "sourceMap": false
+    }
+  },
+  //Bootstrap css -----------------------------------------------------------
+  {
+    "outputFileName": "wwwroot/lib/bootstrap/bootstrap.css",
+    "inputFiles": [
+      "node_modules/bootstrap/dist/css/bootstrap.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/bootstrap/bootstrap.min.css",
+    "inputFiles": [
+      "node_modules/bootstrap/dist/css/bootstrap.min.css"
+    ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": true
+    }
+  },
+  //Bootstrap js -----------------------------------------------------------
+  {
+    "outputFileName": "wwwroot/lib/bootstrap/bootstrap.js",
+    "inputFiles": [
+      "node_modules/bootstrap/dist/js/bootstrap.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/bootstrap/bootstrap.min.js",
+    "inputFiles": [
+      "node_modules/bootstrap/dist/js/bootstrap.min.js"
+    ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": true
+    }
+  },
+  //Jquery -----------------------------------------------------------
+  {
+    "outputFileName": "wwwroot/lib/jquery/jquery.js",
+    "inputFiles": [
+      "node_modules/jquery/dist/jquery.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/jquery/jquery.js",
+    "inputFiles": [
+      "node_modules/jquery/dist/jquery.min.js"
+    ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": true
+    }
+  },
+  //Jquery Validation -----------------------------------------------------------
+  {
+    "outputFileName": "wwwroot/lib/jquery-validation/jquery.validate.js",
+    "inputFiles": [
+      "node_modules/jquery-validation/dist/jquery.validate.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/jquery-validation/jquery.validate.min.js",
+    "inputFiles": [
+      "node_modules/jquery-validation/dist/jquery.validate.min.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    }
+  },
+  //Jquery unobtrusive -----------------------------------------------------------
+  {
+    "outputFileName": "wwwroot/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.js",
+    "inputFiles": [
+      "node_modules/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js",
+    "inputFiles": [
+      "node_modules/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    }
   }
 ]
