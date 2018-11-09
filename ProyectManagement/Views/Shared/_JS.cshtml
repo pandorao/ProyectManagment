@@ -1,0 +1,17 @@
+﻿<!--Scripts-->
+<environment include="Development">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js" integrity="sha384-kW+oWsYx3YpxvjtZjFXqazFpA7UP/MbiY4jvs+RWZo2+N94PFZ36T6TFkc9O3qoB" crossorigin="anonymous"></script>
+    <script src="~/lib/jquery/jquery.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap/bootstrap.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.js" asp-append-version="true"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+</environment>
+<environment exclude="Development">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js" integrity="sha384-kW+oWsYx3YpxvjtZjFXqazFpA7UP/MbiY4jvs+RWZo2+N94PFZ36T6TFkc9O3qoB" crossorigin="anonymous"></script>
+    <script src="~/lib/jquery/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap/bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/js/site.min.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js" asp-append-version="true"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+</environment>
