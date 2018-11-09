@@ -337,7 +337,7 @@ namespace ProyectManagement.Data.Migrations
                     b.HasOne("ProyectManagement.Models.Job", "job")
                         .WithMany()
                         .HasForeignKey("jobId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ProyectManagement.Models.Contributor", b =>

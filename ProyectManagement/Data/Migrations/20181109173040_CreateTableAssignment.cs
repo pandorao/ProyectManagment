@@ -32,7 +32,7 @@ namespace ProyectManagement.Data.Migrations
                         column: x => x.jobId,
                         principalTable: "Jobs",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
