@@ -1,0 +1,49 @@
+﻿
+@{
+    Layout = "_layout";
+}
+<ul class="nav nav-tabs mb-5">
+    <li class="nav-item">
+        <a asp-action="Details" asp-controller="Proyect" asp-route-id="@ViewData["currentProyect"]" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "ProyectDetails" ? "active" : "")">
+            <span class="fas fa-poll-h"></span> Dashboard
+        </a>
+    </li>
+    <li class="nav-item">
+        <a asp-action="Index" asp-controller="Section" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "SectionIndex" ? "active" : "")">
+            <span class="fas fa-tags"></span> Sections
+        </a>
+    </li>
+    <li class="nav-item">
+        <a asp-action="Index" asp-controller="Contributor" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "ContributorIndex" ? "active" : "")">
+            <span class="fas fa-users"></span> Contributors
+        </a>
+    </li>
+    <li class="nav-item">
+        <a asp-action="AssignedJob" asp-controller="Job" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "JobAssignedJob" ? "active" : "")">
+            <span class="fas fa-tasks"></span> My Assigned Job
+        </a>
+    </li>
+    <li class="nav-item">
+        <a asp-action="JobsCreated" asp-controller="Job" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "JobJobsCreated" ? "active" : "")">
+            <span class="fas fa-tasks"></span> My Jobs Created
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            <span class="fas fa-calendar"></span> Planner
+        </a>
+    </li>
+    <li class="nav-item">
+        <a asp-action="Edit" asp-controller="Proyect" asp-route-id="@ViewData["currentProyect"]" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "ProyectEdit" ? "active" : "")">
+            <span class="fas fa-cog"></span> Settings
+        </a>
+    </li>
+</ul>
+
+@RenderBody()
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}
+
+
