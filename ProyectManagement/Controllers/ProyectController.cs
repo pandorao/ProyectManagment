@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ProyectManagement.Data;
 using ProyectManagement.Models;
+using ProyectManagement.Models.ProyectViewModels;
 
 namespace ProyectManagement.Controllers
 {
@@ -15,10 +17,12 @@ namespace ProyectManagement.Controllers
     public class ProyectController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ProyectController(ApplicationDbContext context)
+        public ProyectController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Proyect
@@ -52,19 +56,29 @@ namespace ProyectManagement.Controllers
         }
 
         // POST: Proyect/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Status")] Proyect proyect)
+        public async Task<IActionResult> Create(ProyectCreateViewModel model)
         {
+            var userId = _userManager.GetUserId(User);
+            if (userId == null)
+            {
+                return BadRequest();
+            }
+
             if (ModelState.IsValid)
             {
-                _context.Add(proyect);
+                _context.Add(new Proyect()
+                {
+                    Description = model.Description,
+                    Name = model.Name,
+                    Status = EnumProyectManagment.InProcess,
+                    ApplicationUserId = userId,
+                });
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(proyect);
+            return View(model);
         }
 
         // GET: Proyect/Edit/5
