@@ -94,23 +94,36 @@ namespace ProyectManagement.Controllers
             {
                 return NotFound();
             }
-            return View(proyect);
+            return View(new ProyectEditViewModel()
+            {
+                Id = proyect.Id,
+                Name = proyect.Name,
+                Description = proyect.Description,
+                Status = proyect.Status
+            });
         }
 
-        // POST: Proyect/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Status")] Proyect proyect)
+        public async Task<IActionResult> Edit(int id, ProyectEditViewModel model)
         {
-            if (id != proyect.Id)
+            if (id != model.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                var proyect = await _context.Proyects.FindAsync(model.Id);
+                if (proyect == null)
+                {
+                    return NotFound();
+                }
+
+                proyect.Name = model.Name;
+                proyect.Description = model.Description;
+                proyect.Status = model.Status;
+
                 try
                 {
                     _context.Update(proyect);
@@ -127,9 +140,9 @@ namespace ProyectManagement.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { id = model.Id });
             }
-            return View(proyect);
+            return View(model);
         }
 
         // GET: Proyect/Delete/5

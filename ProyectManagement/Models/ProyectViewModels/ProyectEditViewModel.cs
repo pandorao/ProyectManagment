@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ProyectManagement.Models
+namespace ProyectManagement.Models.ProyectViewModels
 {
-    public class Proyect
+    public class ProyectEditViewModel
     {
         public int Id { get; set; }
 
@@ -17,17 +17,5 @@ namespace ProyectManagement.Models
         public string Description { get; set; }
 
         public EnumProyectManagment Status { get; set; }
-
-        [Required]
-        public string ApplicationUserId { get; set; }
-        public ApplicationUser ApplicationUser { get; set; }
-    }
-
-    public enum EnumProyectManagment  
-    {
-        [Display(Name = "In Process")]
-        InProcess,
-        [Display(Name = "Finalized")]
-        Finalized
     }
 }
