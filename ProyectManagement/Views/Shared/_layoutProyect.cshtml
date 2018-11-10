@@ -9,22 +9,22 @@
         </a>
     </li>
     <li class="nav-item">
-        <a asp-action="Index" asp-controller="Section" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "SectionIndex" ? "active" : "")">
+        <a asp-action="Index" asp-controller="Section" asp-route-proyectId="@ViewData["currentProyect"]" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "SectionIndex" ? "active" : "")">
             <span class="fas fa-tags"></span> Sections
         </a>
     </li>
     <li class="nav-item">
-        <a asp-action="Index" asp-controller="Contributor" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "ContributorIndex" ? "active" : "")">
+        <a asp-action="Index" asp-controller="Contributor" asp-route-proyectId="@ViewData["currentProyect"]" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "ContributorIndex" ? "active" : "")">
             <span class="fas fa-users"></span> Contributors
         </a>
     </li>
     <li class="nav-item">
-        <a asp-action="AssignedJob" asp-controller="Job" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "JobAssignedJob" ? "active" : "")">
+        <a asp-action="AssignedJob" asp-controller="Job" asp-route-proyectId="@ViewData["currentProyect"]" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "JobAssignedJob" ? "active" : "")">
             <span class="fas fa-tasks"></span> My Assigned Job
         </a>
     </li>
     <li class="nav-item">
-        <a asp-action="JobsCreated" asp-controller="Job" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "JobJobsCreated" ? "active" : "")">
+        <a asp-action="JobsCreated" asp-controller="Job" asp-route-proyectId="@ViewData["currentProyect"]" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "JobJobsCreated" ? "active" : "")">
             <span class="fas fa-tasks"></span> My Jobs Created
         </a>
     </li>
