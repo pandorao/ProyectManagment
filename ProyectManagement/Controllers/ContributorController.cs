@@ -130,26 +130,35 @@ namespace ProyectManagement.Controllers
             {
                 return NotFound();
             }
-            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id", contributor.ApplicationUserId);
-            ViewData["ProyectId"] = new SelectList(_context.Proyects, "Id", "Description", contributor.ProyectId);
+
+            ViewData["currentProyect"] = contributor.ProyectId;
             ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Name", contributor.SectionId);
-            return View(contributor);
+            return View(new ContributorEditViewModel()
+            {
+                Contributor = contributor,
+                Id = contributor.Id,
+                SectionId = contributor.SectionId
+            });
         }
 
-        // POST: Contributor/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,SectionId,ProyectId,ApplicationUserId")] Contributor contributor)
+        public async Task<IActionResult> Edit(int id, ContributorEditViewModel model)
         {
-            if (id != contributor.Id)
+            if (id != model.Id)
+            {
+                return NotFound();
+            }
+
+            var contributor = await _context.Contributors.FirstOrDefaultAsync(c => c.Id == model.Id);
+            if (contributor == null)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                contributor.SectionId = model.SectionId;
                 try
                 {
                     _context.Update(contributor);
@@ -166,11 +175,10 @@ namespace ProyectManagement.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { contributor.Id });
             }
-            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id", contributor.ApplicationUserId);
-            ViewData["ProyectId"] = new SelectList(_context.Proyects, "Id", "Description", contributor.ProyectId);
-            ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Name", contributor.SectionId);
+            ViewData["currentProyect"] = contributor.ProyectId;
+            ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Name", model.SectionId);
             return View(contributor);
         }
 

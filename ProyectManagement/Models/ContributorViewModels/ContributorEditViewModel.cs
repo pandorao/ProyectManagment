@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace ProyectManagement.Models.ContributorViewModels
 {
-    public class ContributorCreateViewModel
+    public class ContributorEditViewModel
     {
-        [Display(Name = "User Name")]
-        [EmailAddress]
-        public string UserName { get; set; } 
+        public Contributor Contributor { get; set; }
 
-        public int ProyectId { get; set; }
+        public int Id { get; set; } 
 
         [Display(Name = "Section")]
         public int? SectionId { get; set; }
