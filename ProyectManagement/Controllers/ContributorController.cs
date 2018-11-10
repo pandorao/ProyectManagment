@@ -52,14 +52,16 @@ namespace ProyectManagement.Controllers
             }
 
             var contributor = await _context.Contributors
-                .Include(c => c.ApplicationUser)
-                .Include(c => c.Proyect)
                 .Include(c => c.Section)
-                .SingleOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (contributor == null)
             {
                 return NotFound();
             }
+
+            ViewData["currentProyect"] = contributor.ProyectId;
+
 
             return View(contributor);
         }
