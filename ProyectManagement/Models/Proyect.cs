@@ -17,6 +17,10 @@ namespace ProyectManagement.Models
         public string Description { get; set; }
 
         public EnumProyectManagment Status { get; set; }
+
+        [Required]
+        public string ApplicationUserId { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
     }
 
     public enum EnumProyectManagment  
