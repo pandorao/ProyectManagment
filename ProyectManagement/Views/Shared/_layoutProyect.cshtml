@@ -38,6 +38,11 @@
             <span class="fas fa-cog"></span> Settings
         </a>
     </li>
+    <li class="nav-item">
+        <a asp-action="Delete" asp-controller="Proyect" asp-route-id="@ViewData["currentProyect"]" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "ProyectDelete" ? "active" : "")">
+            <span class="fas fa-trash"></span> Delete
+        </a>
+    </li>
 </ul>
 
 @RenderBody()
