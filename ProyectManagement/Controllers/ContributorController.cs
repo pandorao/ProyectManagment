@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ProyectManagement.Data;
 using ProyectManagement.Models;
+using ProyectManagement.Models.ContributorViewModels;
 
 namespace ProyectManagement.Controllers
 {
@@ -15,17 +17,30 @@ namespace ProyectManagement.Controllers
     public class ContributorController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ContributorController(ApplicationDbContext context)
+        public ContributorController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Contributor
-        public async Task<IActionResult> Index()
+        public IActionResult Index(int? proyectId)
         {
-            var applicationDbContext = _context.Contributors.Include(c => c.ApplicationUser).Include(c => c.Proyect).Include(c => c.Section);
-            return View(await applicationDbContext.ToListAsync());
+            if (proyectId == null)
+            {
+                return NotFound();
+            } 
+
+            var contributors = _context.Contributors
+                .Include(c => c.Section)
+                .Include(c => c.ApplicationUser)
+                .Where(p => p.ProyectId == proyectId);
+
+            ViewData["currentProyect"] = proyectId;
+
+            return View(contributors);
         }
 
         // GET: Contributor/Details/5
@@ -50,31 +65,54 @@ namespace ProyectManagement.Controllers
         }
 
         // GET: Contributor/Create
-        public IActionResult Create()
+        public IActionResult Create(int? proyectId)
         {
-            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["ProyectId"] = new SelectList(_context.Proyects, "Id", "Description");
+            if (proyectId == null)
+            {
+                return NotFound();
+            }
+            ViewData["currentProyect"] = proyectId;
             ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Name");
-            return View();
+
+            return View(new ContributorCreateViewModel()
+            {
+                ProyectId = (int) proyectId
+            });
         }
 
-        // POST: Contributor/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SectionId,ProyectId,ApplicationUserId")] Contributor contributor)
+        public async Task<IActionResult> Create(int proyectId, ContributorCreateViewModel model)
         {
-            if (ModelState.IsValid)
+            ViewData["currentProyect"] = proyectId;
+            if (ModelState.IsValid) 
             {
-                _context.Add(contributor);
+                var user = await _userManager.FindByNameAsync(model.UserName);
+                if (user == null) 
+                {
+                    ModelState.AddModelError("UserName", "User not found");
+                    return View(model);
+                } 
+
+                if (_context.Contributors.Any(c => c.ApplicationUserId == user.Id && c.ProyectId == proyectId))
+                {
+                    ModelState.AddModelError("UserName", "User is already contributor");
+                    return View(model);
+                }
+
+                _context.Add(new Contributor
+                {
+                    ApplicationUserId = user.Id,
+                    ProyectId = model.ProyectId,
+                    SectionId = model.SectionId
+                });
+
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index),  new { proyectId });
             }
-            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id", contributor.ApplicationUserId);
-            ViewData["ProyectId"] = new SelectList(_context.Proyects, "Id", "Description", contributor.ProyectId);
-            ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Name", contributor.SectionId);
-            return View(contributor);
+
+            ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Name", model.SectionId);
+            return View(model);
         }
 
         // GET: Contributor/Edit/5
