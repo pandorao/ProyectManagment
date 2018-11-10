@@ -191,7 +191,7 @@ namespace ProyectManagement.Controllers
             {
                 return NotFound();
             }
-
+            ViewData["currentProyect"] = contributor.ProyectId;
             return View(contributor);
         }
 
@@ -203,7 +203,7 @@ namespace ProyectManagement.Controllers
             var contributor = await _context.Contributors.SingleOrDefaultAsync(m => m.Id == id);
             _context.Contributors.Remove(contributor);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { contributor.ProyectId });
         }
 
         private bool ContributorExists(int id)
