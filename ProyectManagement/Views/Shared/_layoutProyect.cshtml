@@ -24,8 +24,8 @@
         </a>
     </li>
     <li class="nav-item">
-        <a asp-action="JobsCreated" asp-controller="Job" asp-route-proyectId="@ViewData["currentProyect"]" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "JobJobsCreated" ? "active" : "")">
-            <span class="fas fa-tasks"></span> My Jobs Created
+        <a asp-action="Index" asp-controller="Job" asp-route-proyectId="@ViewData["currentProyect"]" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "JobIndex" ? "active" : "")">
+            <span class="fas fa-tasks"></span> All Jobs
         </a>
     </li>
     <li class="nav-item">
