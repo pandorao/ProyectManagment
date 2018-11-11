@@ -28,11 +28,12 @@
                 <input asp-for="endDate" class="form-control" />
                 <span asp-validation-for="endDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <!--<div class="form-group">
                 <label asp-for="State" class="control-label"></label>
                 <select asp-for="State" class="form-control" asp-items="Html.GetEnumSelectList<enumState>()"></select>
                 <span asp-validation-for="State" class="text-danger"></span>
             </div>
+				-->
             <div class="form-group">
                 <label asp-for="sectionId" class="control-label"></label>
                 <select asp-for="sectionId" class ="form-control" asp-items="ViewBag.sectionId"></select>

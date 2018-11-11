@@ -15,9 +15,9 @@
         $('#calendar').fullCalendar({
               eventSources: [
                 {
-                    url: '/Job/PlannerEvent', // use the `url` property
-                    color: 'yellow',    // an option!
-                    textColor: 'black'  // an option!
+                    url: '/Job/PlannerEvent?proyectId=@ViewData["CurrentProyect"]', // use the `url` property
+					  color: '#007bff',    // an option! #4169E1
+                    textColor: 'white'  // an option!
                 }
             ]
         })

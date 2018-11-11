@@ -49,9 +49,20 @@ namespace ProyectManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(job);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index), new { proyectID });
+				job.State = enumState.Active;
+				if (job.startDate.Subtract(job.endDate).TotalMinutes <0)
+				{
+					_context.Add(job);
+					await _context.SaveChangesAsync();
+					return RedirectToAction(nameof(Index), new { proyectID });
+				}
+				else
+				{
+					ViewData["Error"]=1;
+					return View();
+				}
+				//job = t1;
+				
             }
 
             ViewData["CurrentProyect"] = proyectID;
@@ -134,32 +145,30 @@ namespace ProyectManagement.Controllers
         // GET: Job/Planner/5
         public IActionResult Planner(int? proyectId)
         {
+			if (proyectId == null)
+			{
+				return NotFound();
+			}
             ViewData["CurrentProyect"] = proyectId;
             return View();
         }
 
         // GET: Job/Planner/5
-        public IActionResult PlannerEvent()
+        public IActionResult PlannerEvent(int? proyectId)
         {
-            var list = new List<PlannerEventViewModel>()
-            {
-                new PlannerEventViewModel(){
-                    title = "job 1",
-                    start = new DateTime(2018,11,17),
-                    end = new DateTime(2018,11,16)
-                },
-                new PlannerEventViewModel(){
-                    title = "job 2",
-                    start = new DateTime(2018,11,12),
-                    end = new DateTime(2018,11,13)
-                },
-                new PlannerEventViewModel(){
-                    title = "job 3",
-                    start = new DateTime(2018,11,20),
-                    end = new DateTime(2018,11,23)
-                }
-            };
-            return Json(list);
+			var list = new List<PlannerEventViewModel>();
+			var applicationDbContext = _context.Jobs.Include(j => j.Section).Where(c => c.Section.ProyectId == proyectId);
+			var temp = applicationDbContext.ToArray();
+			foreach (Job j in temp)
+			{
+				list.Add(new PlannerEventViewModel()
+				{
+					title = j.Name,
+					start = j.startDate,
+					end = j.endDate
+				});
+			}
+			return Json(list);
         }
 
         // POST: Job/Delete/5
