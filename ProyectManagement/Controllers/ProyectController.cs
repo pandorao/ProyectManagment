@@ -71,13 +71,22 @@ namespace ProyectManagement.Controllers
 
             if (ModelState.IsValid)
             {
-                _context.Add(new Proyect()
+                var proyect = new Proyect()
                 {
                     Description = model.Description,
                     Name = model.Name,
                     Status = EnumProyectManagment.InProcess,
                     ApplicationUserId = userId,
+                };
+                _context.Add(proyect);
+                _context.Add(new Contributor()
+                {
+                    Proyect = proyect,
+                    SectionId = null,
+                    ApplicationUserId = userId
                 });
+                
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
