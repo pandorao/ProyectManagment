@@ -18,7 +18,7 @@ namespace ProyectManagement.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-
+        
         public ProyectController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
@@ -28,7 +28,10 @@ namespace ProyectManagement.Controllers
         // GET: Proyect
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Proyects.ToListAsync());
+            ViewData["currentUser"] = _userManager.GetUserId(HttpContext.User);//se extrae el id del usuario
+            var proyects_currentuser = from p in _context.Proyects select p;//se seleccionas primero todos los proyectos del usuario en sesion
+            proyects_currentuser = proyects_currentuser.Where(p => p.ApplicationUserId.Equals(ViewData["currentUser"]));//se obtienen los proyectos que pertenezcan al usuario
+            return View(await proyects_currentuser.ToListAsync());
         }
 
         // GET: Proyect/Details/5
