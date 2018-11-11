@@ -116,7 +116,7 @@
   {
     "outputFileName": "wwwroot/lib/moment/moment.js",
     "inputFiles": [
-      "node_modules/moment/src/moment.js"
+      "node_modules/moment/moment.js"
     ]
   }
 ]

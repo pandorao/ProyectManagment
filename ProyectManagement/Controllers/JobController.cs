@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ProyectManagement.Data;
 using ProyectManagement.Models;
+using ProyectManagement.Models.JobViewModels;
 
 namespace ProyectManagement.Controllers
 {
@@ -135,6 +136,30 @@ namespace ProyectManagement.Controllers
         {
             ViewData["CurrentProyect"] = proyectId;
             return View();
+        }
+
+        // GET: Job/Planner/5
+        public IActionResult PlannerEvent()
+        {
+            var list = new List<PlannerEventViewModel>()
+            {
+                new PlannerEventViewModel(){
+                    title = "job 1",
+                    start = new DateTime(2018,11,17),
+                    end = new DateTime(2018,11,16)
+                },
+                new PlannerEventViewModel(){
+                    title = "job 2",
+                    start = new DateTime(2018,11,12),
+                    end = new DateTime(2018,11,13)
+                },
+                new PlannerEventViewModel(){
+                    title = "job 3",
+                    start = new DateTime(2018,11,20),
+                    end = new DateTime(2018,11,23)
+                }
+            };
+            return Json(list);
         }
 
         // POST: Job/Delete/5

@@ -29,7 +29,7 @@
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a asp-action="Planner" asp-controller="Job" asp-route-proyectId="@ViewData["currentProyect"]" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "JobPlanner" ? "active" : "")">
             <span class="fas fa-calendar"></span> Planner
         </a>
     </li>
