@@ -19,7 +19,7 @@
         </a>
     </li>
     <li class="nav-item">
-        <a asp-action="AssignedJob" asp-controller="Job" asp-route-proyectId="@ViewData["currentProyect"]" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "JobAssignedJob" ? "active" : "")">
+        <a asp-action="AssignedJob" asp-controller="Assignment" asp-route-proyectId="@ViewData["currentProyect"]" class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() + ViewContext.RouteData.Values["Action"].ToString() == "JobAssignedJob" ? "active" : "")">
             <span class="fas fa-tasks"></span> My Assigned Job
         </a>
     </li>
