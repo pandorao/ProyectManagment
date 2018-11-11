@@ -135,8 +135,12 @@ namespace ProyectManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var job = await _context.Jobs.Include(j => j.Section).FirstOrDefaultAsync(m => m.Id == id);
+            var job = await _context.Jobs
+                .Include(j => j.Section)
+                .Include(j => j.Assignments)
+                .FirstOrDefaultAsync(m => m.Id == id);
             _context.Jobs.Remove(job);
+            _context.Assignments.RemoveRange(job.Assignments);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index), new { job.Section.ProyectId });
         }
