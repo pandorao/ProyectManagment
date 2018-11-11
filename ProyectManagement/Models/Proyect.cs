@@ -20,7 +20,9 @@ namespace ProyectManagement.Models
 
         [Required]
         public string ApplicationUserId { get; set; }
-        public ApplicationUser ApplicationUser { get; set; }
+        public ApplicationUser ApplicationUser { get; set; } 
+         
+        public virtual ICollection<Contributor> Contributors { get; set; }
     }
 
     public enum EnumProyectManagment  

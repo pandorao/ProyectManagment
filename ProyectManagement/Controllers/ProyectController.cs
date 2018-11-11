@@ -28,9 +28,16 @@ namespace ProyectManagement.Controllers
         // GET: Proyect
         public async Task<IActionResult> Index()
         {
-            ViewData["currentUser"] = _userManager.GetUserId(HttpContext.User);//se extrae el id del usuario
-            var proyects_currentuser = from p in _context.Proyects select p;//se seleccionas primero todos los proyectos del usuario en sesion
-            proyects_currentuser = proyects_currentuser.Where(p => p.ApplicationUserId.Equals(ViewData["currentUser"]));//se obtienen los proyectos que pertenezcan al usuario
+            var userId = _userManager.GetUserId(User);
+            if (userId == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["currentUser"] = userId;
+            var proyects_currentuser = _context.Proyects
+                .Include(p => p.Contributors)
+                .Where(p => p.ApplicationUserId == userId || p.Contributors.Any(c => c.ApplicationUserId == userId));
             return View(await proyects_currentuser.ToListAsync());
         }
 
