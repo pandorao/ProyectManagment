@@ -74,7 +74,11 @@ namespace ProyectManagement.Controllers
                 return NotFound();
             }
             ViewData["currentProyect"] = proyectId;
-            ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Name");
+
+            var list = _context.Sections.Where(s => s.ProyectId == proyectId).ToList();
+            list.Add(new Section() { Id = 0, Name = "None" });
+            list = list.OrderBy(l => l.Id).ToList();
+            ViewData["SectionId"] = new SelectList(list, "Id", "Name");
 
             return View(new ContributorCreateViewModel()
             {
@@ -93,27 +97,28 @@ namespace ProyectManagement.Controllers
                 if (user == null) 
                 {
                     ModelState.AddModelError("UserName", "User not found");
-                    return View(model);
-                } 
-
-                if (_context.Contributors.Any(c => c.ApplicationUserId == user.Id && c.ProyectId == proyectId))
+                }else if (_context.Contributors.Any(c => c.ApplicationUserId == user.Id && c.ProyectId == proyectId))
                 {
                     ModelState.AddModelError("UserName", "User is already contributor");
-                    return View(model);
                 }
-
-                _context.Add(new Contributor
+                else
                 {
-                    ApplicationUserId = user.Id,
-                    ProyectId = model.ProyectId,
-                    SectionId = model.SectionId
-                });
+                    _context.Add(new Contributor
+                    {
+                        ApplicationUserId = user.Id,
+                        ProyectId = model.ProyectId,
+                        SectionId = model.SectionId == 0 ? null : model.SectionId
+                    });
 
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index),  new { proyectId });
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index), new { proyectId });
+                }
             }
 
-            ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Name", model.SectionId);
+            var list = _context.Sections.Where(s => s.ProyectId == proyectId).ToList();
+            list.Add(new Section() { Id = 0, Name = "None" });
+            list = list.OrderBy(l => l.Id).ToList();
+            ViewData["SectionId"] = new SelectList(list, "Id", "Name", model.SectionId);
             return View(model);
         }
 
@@ -132,7 +137,10 @@ namespace ProyectManagement.Controllers
             }
 
             ViewData["currentProyect"] = contributor.ProyectId;
-            ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Name", contributor.SectionId);
+            var list = _context.Sections.Where(s => s.ProyectId == contributor.ProyectId).ToList();
+            list.Add(new Section() { Id = 0, Name = "None" });
+            list = list.OrderBy(l => l.Id).ToList();
+            ViewData["SectionId"] = new SelectList(list, "Id", "Name", contributor.SectionId);
             return View(new ContributorEditViewModel()
             {
                 Contributor = contributor,
@@ -158,7 +166,7 @@ namespace ProyectManagement.Controllers
 
             if (ModelState.IsValid)
             {
-                contributor.SectionId = model.SectionId;
+                contributor.SectionId = model.SectionId == 0 ? null : model.SectionId;
                 try
                 {
                     _context.Update(contributor);
@@ -178,7 +186,10 @@ namespace ProyectManagement.Controllers
                 return RedirectToAction(nameof(Details), new { contributor.Id });
             }
             ViewData["currentProyect"] = contributor.ProyectId;
-            ViewData["SectionId"] = new SelectList(_context.Sections, "Id", "Name", model.SectionId);
+            var list = _context.Sections.Where(s => s.ProyectId == contributor.ProyectId).ToList();
+            list.Add(new Section() { Id = 0, Name = "None"});
+            list = list.OrderBy(l => l.Id).ToList();
+            ViewData["SectionId"] = new SelectList(list, "Id", "Name", model.SectionId);
             return View(contributor);
         }
 

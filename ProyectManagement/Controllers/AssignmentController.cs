@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ProyectManagement.Data;
 using ProyectManagement.Models;
+using ProyectManagement.Models.AssignmentViewModels;
 
 namespace ProyectManagement.Controllers
 {
@@ -15,138 +17,90 @@ namespace ProyectManagement.Controllers
     public class AssignmentController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AssignmentController(ApplicationDbContext context)
+        public AssignmentController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Assignment
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> AssignedJob(int proyectID) 
         {
-            var applicationDbContext = _context.Assignments.Include(a => a.contributor).Include(a => a.job);
+            ViewData["CurrentProyect"] = proyectID;
+            var userId = _userManager.GetUserId(User);
+            if (userId == null)
+            {
+                return BadRequest();
+            }
+
+            var contributor = await _context.Contributors.FirstOrDefaultAsync(c => c.ProyectId == proyectID && c.ApplicationUserId == userId);
+            if (contributor == null)
+            {
+                return View(new List<Job>());
+            }
+
+            var applicationDbContext = from assignment in _context.Assignments.Where(a => a.ContributorId == contributor.Id)
+                                       join job in _context.Jobs.Include(p => p.Section).Where(p => p.Section.ProyectId == proyectID)
+                                       on assignment.jobId equals job.Id
+                                       select new Job()
+                                       {
+                                           endDate = job.endDate,
+                                           Name = job.Name,
+                                           Id = job.Id,
+                                           sectionId = job.sectionId,
+                                           startDate = job.startDate,
+                                           State = job.State
+                                       };
+
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Assignment/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var assignment = await _context.Assignments
-                .Include(a => a.contributor)
-                .Include(a => a.job)
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (assignment == null)
-            {
-                return NotFound();
-            }
-
-            return View(assignment);
-        }
-
         // GET: Assignment/Create
-        public IActionResult Create()
+        public IActionResult Create(int jobId, int proyectID)
         {
-            ViewData["ContributorId"] = new SelectList(_context.Contributors, "Id", "ApplicationUserId");
-            ViewData["jobId"] = new SelectList(_context.Jobs, "Id", "Name");
-            return View();
+            ViewData["MsgError"] = TempData["MsgError"];
+            var users = _context.Contributors
+                .Include(p => p.ApplicationUser)
+                .Where(c => c.ProyectId == proyectID)
+                .Select(c => new AssignmentCreateViewModel()
+                {
+                    UserName = c.ApplicationUser.UserName,
+                    ContributorId = c.Id
+                });
+
+            ViewData["ContributorId"] = new SelectList(users, "ContributorId", "UserName");
+            ViewData["jobId"] = jobId;
+            ViewData["CurrentProyect"] = proyectID;
+            ViewBag.ListUserAssign = _context.Assignments
+                .Include(c => c.contributor)
+                    .ThenInclude(c => c.ApplicationUser)
+                .Where(a => a.jobId == jobId).ToList();
+            return View(new Assignment()
+            {
+                jobId = jobId
+            });
         }
 
         // POST: Assignment/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,jobId,ContributorId")] Assignment assignment)
+        public async Task<IActionResult> Create(int jobId, int proyectID,  Assignment assignment)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(assignment);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ContributorId"] = new SelectList(_context.Contributors, "Id", "ApplicationUserId", assignment.ContributorId);
-            ViewData["jobId"] = new SelectList(_context.Jobs, "Id", "Name", assignment.jobId);
-            return View(assignment);
-        }
-
-        // GET: Assignment/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var assignment = await _context.Assignments.SingleOrDefaultAsync(m => m.Id == id);
-            if (assignment == null)
-            {
-                return NotFound();
-            }
-            ViewData["ContributorId"] = new SelectList(_context.Contributors, "Id", "ApplicationUserId", assignment.ContributorId);
-            ViewData["jobId"] = new SelectList(_context.Jobs, "Id", "Name", assignment.jobId);
-            return View(assignment);
-        }
-
-        // POST: Assignment/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,jobId,ContributorId")] Assignment assignment)
-        {
-            if (id != assignment.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                if (_context.Assignments.Any(a => a.ContributorId == assignment.ContributorId && a.jobId == assignment.jobId))
                 {
-                    _context.Update(assignment);
+                    TempData["MsgError"] = "Error! the job was already assigned";
+                }
+                else
+                {
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AssignmentExists(assignment.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ContributorId"] = new SelectList(_context.Contributors, "Id", "ApplicationUserId", assignment.ContributorId);
-            ViewData["jobId"] = new SelectList(_context.Jobs, "Id", "Name", assignment.jobId);
-            return View(assignment);
-        }
-
-        // GET: Assignment/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var assignment = await _context.Assignments
-                .Include(a => a.contributor)
-                .Include(a => a.job)
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (assignment == null)
-            {
-                return NotFound();
-            }
-
-            return View(assignment);
+            } 
+            return RedirectToAction(nameof(Create), new { proyectID, jobId });
         }
 
         // POST: Assignment/Delete/5
@@ -154,10 +108,11 @@ namespace ProyectManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var assignment = await _context.Assignments.SingleOrDefaultAsync(m => m.Id == id);
+            var assignment = await _context.Assignments.Include(a => a.contributor).FirstOrDefaultAsync(m => m.Id == id);
             _context.Assignments.Remove(assignment);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            TempData["MsgError"] = "Successful! the contributor was deleted";
+            return RedirectToAction(nameof(Create), new { proyectId = assignment.contributor.ProyectId, assignment.jobId });
         }
 
         private bool AssignmentExists(int id)

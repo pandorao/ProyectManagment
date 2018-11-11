@@ -99,5 +99,24 @@
       "enabled": true,
       "renameLocals": true
     }
+  },
+  //Full Calendar -----------------------------------------------------------
+  {
+    "outputFileName": "wwwroot/lib/fullcalendar/fullcalendar.js",
+    "inputFiles": [
+      "node_modules/fullcalendar/dist/fullcalendar.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/fullcalendar/fullcalendar.css",
+    "inputFiles": [
+      "node_modules/fullcalendar/dist/fullcalendar.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/moment/moment.js",
+    "inputFiles": [
+      "node_modules/moment/moment.js"
+    ]
   }
 ]

@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewData["Title"] = "Planner";
+    Layout = "_layoutProyect";
+}
+
+<div id='calendar'></div>
+
+
+@section Scripts {
+<script>
+    $(document).ready(
+        $(function () {
+        // page is now ready, initialize the calendar...
+        $('#calendar').fullCalendar({
+              eventSources: [
+                {
+                    url: '/Job/PlannerEvent', // use the `url` property
+                    color: 'yellow',    // an option!
+                    textColor: 'black'  // an option!
+                }
+            ]
+        })
+    }))
+</script>
+}

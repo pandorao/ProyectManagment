@@ -1,15 +1,11 @@
 ﻿@model IEnumerable<ProyectManagement.Models.Job>
 
 @{
-    ViewData["Title"] = "All Jobs";
+    ViewData["Title"] = "My Assigned Jobs";
     Layout = "_layoutProyect";
 }
 
 <h2 class="display-4">@ViewData["Title"]</h2>
-
-<p>
-    <a asp-action="Create" asp-route-proyectId="@ViewData["currentProyect"]" class="btn btn-sm btn-outline-primary">Create New</a>
-</p>
 
 <ul class="list-group">
     @foreach (var item in Model)
@@ -23,8 +19,8 @@
             <p class="mb-1">@Html.DisplayFor(model => item.Section.Name)</p>
             <div class="justify-content-end">
                 <a asp-action="Create" asp-controller="Assignment" asp-route-jobid="@item.Id" asp-route-proyectId="@ViewData["currentProyect"]" class="btn btn-sm btn-outline-secondary">Assign</a>
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a>
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                <a asp-action="Edit" asp-controller="Job" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a>
+                <a asp-action="Delete" asp-controller="Job" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
             </div>
         </div>
         <small>@item.startDate.ToShortDateString() - @item.endDate.ToShortDateString() </small>

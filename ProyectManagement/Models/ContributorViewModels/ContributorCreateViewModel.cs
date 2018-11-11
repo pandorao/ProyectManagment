@@ -10,6 +10,7 @@ namespace ProyectManagement.Models.ContributorViewModels
     {
         [Display(Name = "User Name")]
         [EmailAddress]
+        [Required]
         public string UserName { get; set; } 
 
         public int ProyectId { get; set; }

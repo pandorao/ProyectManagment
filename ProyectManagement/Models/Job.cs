@@ -17,9 +17,8 @@ namespace ProyectManagement.Models
         public DateTime endDate { get; set; }
         public enumState State { get; set; }
         public int sectionId { get; set; }
-        public Section Section { get; set; }
-
-
+        public Section Section { get; set; } 
+        public virtual ICollection<Assignment> Assignments { get; set; }
     }
     public enum enumState
     {
