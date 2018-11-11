@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ProyectManagement.Data;
 using ProyectManagement.Models;
+using ProyectManagement.Models.SectionViewModels;
 
 namespace ProyectManagement.Controllers
 {
@@ -22,20 +23,27 @@ namespace ProyectManagement.Controllers
         }
 
         // GET: Section
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? proyectID)
         {
-            var applicationDbContext = _context.Sections.Include(s => s.Proyect);
-            return View(await applicationDbContext.ToListAsync());
+            //var applicationDbContext = _context.Sections.Include(s => s.Proyect);
+            var sections = from s in _context.Sections select s;
+            if (proyectID == null)
+            {
+                return NotFound();
+            }
+            ViewData["currentProyect"] = proyectID;
+            sections = sections.Where(s => s.ProyectId.Equals(proyectID));
+            return View(await sections.ToListAsync());
         }
 
-        // GET: Section/Details/5
-        public async Task<IActionResult> Details(int? id)
+// GET: Section/Details/5
+public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
+            ViewData["currentSection"] = id;
             var section = await _context.Sections
                 .Include(s => s.Proyect)
                 .SingleOrDefaultAsync(m => m.Id == id);
@@ -48,10 +56,17 @@ namespace ProyectManagement.Controllers
         }
 
         // GET: Section/Create
-        public IActionResult Create()
+        public IActionResult Create(int? proyectID)
         {
-            ViewData["ProyectId"] = new SelectList(_context.Proyects, "Id", "Description");
-            return View();
+            ViewData["currentProyect"] = proyectID;
+            if (proyectID == null)
+            {
+                return BadRequest();
+            }
+            return View(new SectionCreateViewModel()
+            {
+                proyectId = (int)proyectID
+            });
         }
 
         // POST: Section/Create
@@ -59,33 +74,43 @@ namespace ProyectManagement.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,ProyectId,Descriptions")] Section section)
+        public async Task<IActionResult> Create(SectionCreateViewModel section)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(section);
+                _context.Add(new Section()
+                {
+                    ProyectId = section.proyectId,
+                    Name = section.Name,
+                    Descriptions = section.Description
+                });
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index),new { ProyectId = section.proyectId });
             }
-            ViewData["ProyectId"] = new SelectList(_context.Proyects, "Id", "Description", section.ProyectId);
+            //ViewData["ProyectId"] = new SelectList(_context.Proyects, "Id", "Description", section.ProyectId);
             return View(section);
         }
 
         // GET: Section/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            //ViewData["currentSection"] = id;
             if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
-
             var section = await _context.Sections.SingleOrDefaultAsync(m => m.Id == id);
             if (section == null)
             {
                 return NotFound();
             }
-            ViewData["ProyectId"] = new SelectList(_context.Proyects, "Id", "Description", section.ProyectId);
-            return View(section);
+            //ViewData["ProyectId"] = new SelectList(_context.Proyects, "Id", "Description", section.ProyectId);
+            return View(new SectionEditViewModel()
+            {
+                Id = section.Id,
+                Name = section.Name,
+                Description = section.Descriptions
+            });
         }
 
         // POST: Section/Edit/5
@@ -93,15 +118,21 @@ namespace ProyectManagement.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ProyectId,Descriptions")] Section section)
+        public async Task<IActionResult> Edit(int id, SectionEditViewModel model)
         {
-            if (id != section.Id)
+            if (id != model.Id) 
             {
                 return NotFound();
             }
-
+            var section = _context.Sections.FirstOrDefault(c => c.Id == model.Id);
+            if(section == null)
+            {
+                return NotFound();
+            }
             if (ModelState.IsValid)
             {
+                section.Name = model.Name;
+                section.Descriptions = model.Description;
                 try
                 {
                     _context.Update(section);
@@ -118,10 +149,10 @@ namespace ProyectManagement.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new {section.Id});
             }
-            ViewData["ProyectId"] = new SelectList(_context.Proyects, "Id", "Description", section.ProyectId);
-            return View(section);
+            //ViewData["ProyectId"] = new SelectList(_context.Proyects, "Id", "Description", section.ProyectId);
+            return View(model);
         }
 
         // GET: Section/Delete/5
@@ -131,7 +162,6 @@ namespace ProyectManagement.Controllers
             {
                 return NotFound();
             }
-
             var section = await _context.Sections
                 .Include(s => s.Proyect)
                 .SingleOrDefaultAsync(m => m.Id == id);
@@ -151,7 +181,7 @@ namespace ProyectManagement.Controllers
             var section = await _context.Sections.SingleOrDefaultAsync(m => m.Id == id);
             _context.Sections.Remove(section);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new {proyectID = section.ProyectId});
         }
 
         private bool SectionExists(int id)
