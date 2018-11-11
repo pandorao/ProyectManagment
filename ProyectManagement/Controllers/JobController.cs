@@ -20,11 +20,16 @@ namespace ProyectManagement.Controllers
         {
             _context = context;
         }
-
+		
         // GET: Job
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? proyectID)
         {
-            var applicationDbContext = _context.Jobs.Include(j => j.Section);
+			if(proyectID == null)
+			{
+				return NotFound();
+			}
+			ViewData["CurrentProyect"] = proyectID;
+            var applicationDbContext = _context.Jobs.Include(j => j.Section).Where(c => c.Section.ProyectId == proyectID);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -43,8 +48,8 @@ namespace ProyectManagement.Controllers
             {
                 return NotFound();
             }
-
-            return View(job);
+			ViewData["CurrentProyect"] = id;
+			return View(job);
         }
 
         // GET: Job/Create
@@ -84,7 +89,8 @@ namespace ProyectManagement.Controllers
             {
                 return NotFound();
             }
-            ViewData["sectionId"] = new SelectList(_context.Sections, "Id", "Name", job.sectionId);
+			ViewData["CurrentProyect"] = id;
+			ViewData["sectionId"] = new SelectList(_context.Sections, "Id", "Name", job.sectionId);
             return View(job);
         }
 
@@ -139,8 +145,8 @@ namespace ProyectManagement.Controllers
             {
                 return NotFound();
             }
-
-            return View(job);
+			ViewData["CurrentProyect"] = id;
+			return View(job);
         }
 
         // POST: Job/Delete/5
