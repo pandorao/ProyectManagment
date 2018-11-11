@@ -2,35 +2,34 @@
 
 @{
     ViewData["Title"] = "Details";
+    Layout = "_layoutProyect";
 }
 
-<h2>Details</h2>
+<div class="row">
+    <div class="col-md-4">
+        <h6>Contributors</h6>
+        @await  Component.InvokeAsync("ContributorsSidebar", new { proyectId = (int)ViewData["currentProyect"] })
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h3 class="float-left">
+                    Details
+                </h3>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-sm btn-danger float-right">Delete</a>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-secondary float-right mr-1">Edit</a>
+            </div>
+            <div class="card-body">
+                <h5 class="float-left">
+                    @Html.DisplayFor(model => model.ApplicationUser.UserName)
+                </h5>
+                <dl class="dl-horizontal">
+                    <dd>
+                        @Html.DisplayFor(model => model.Section.Name)
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
 
-<div>
-    <h4>Contributor</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.ApplicationUser)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ApplicationUser.Id)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Proyect)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Proyect.Description)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Section)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Section.Name)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>

@@ -1,15 +1,4 @@
-﻿@model IEnumerable<ProyectManagement.Models.Contributor>
-
-@{
-    ViewData["Title"] = "Contributors";
-    Layout = "_layoutProyect";
-}
-
-<h2 class="display-4">@ViewData["Title"]</h2>
-
-<p>
-    <a asp-action="Create" asp-route-proyectId="@ViewData["currentProyect"]" class="btn btn-sm btn-outline-primary">Create New</a>
-</p>
+﻿@model IEnumerable<Contributor>
 
 <div class="list-group">
     @foreach (var item in Model)
@@ -22,3 +11,5 @@
         </a>
     }
 </div>
+
+    
