@@ -1,15 +1,10 @@
 ﻿@model IEnumerable<ProyectManagement.Models.Section>
 
 @{
-    ViewData["Title"] = "Your Sections";
+    ViewData["Title"] = "Sections";
     Layout = "_layoutProyect";
 }
 
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
-    </ol>
-</nav>
 <h2 class="display-4">@ViewData["Title"]</h2>
 
 <p>
@@ -21,8 +16,9 @@
     {
         <a asp-action="Details" asp-route-id="@item.Id" class="list-group-item list-group-item-action flex-column align-items-start">
             <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">@Html.DisplayFor(model => item.Name)</h6>
             </div>
-            <p class="mb-1">@Html.DisplayFor(model => item.Descriptions)</p>
+            <p class="mb-1 small">@Html.DisplayFor(model => item.Descriptions)</p>
         </a>
     }
 </div>

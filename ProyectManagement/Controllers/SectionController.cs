@@ -25,25 +25,24 @@ namespace ProyectManagement.Controllers
         // GET: Section
         public async Task<IActionResult> Index(int? proyectID)
         {
-            //var applicationDbContext = _context.Sections.Include(s => s.Proyect);
             var sections = from s in _context.Sections select s;
             if (proyectID == null)
             {
                 return NotFound();
             }
             ViewData["currentProyect"] = proyectID;
-            sections = sections.Where(s => s.ProyectId.Equals(proyectID));
+            sections = sections.Where(s => s.ProyectId == proyectID);
             return View(await sections.ToListAsync());
         }
 
-// GET: Section/Details/5
-public async Task<IActionResult> Details(int? id)
+        // GET: Section/Details/5
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-            ViewData["currentSection"] = id;
+
             var section = await _context.Sections
                 .Include(s => s.Proyect)
                 .SingleOrDefaultAsync(m => m.Id == id);
@@ -51,18 +50,19 @@ public async Task<IActionResult> Details(int? id)
             {
                 return NotFound();
             }
-
+            ViewData["currentProyect"] = section.ProyectId;
             return View(section);
         }
 
         // GET: Section/Create
         public IActionResult Create(int? proyectID)
         {
-            ViewData["currentProyect"] = proyectID;
             if (proyectID == null)
             {
                 return BadRequest();
             }
+
+            ViewData["currentProyect"] = proyectID;
             return View(new SectionCreateViewModel()
             {
                 proyectId = (int)proyectID
@@ -70,11 +70,9 @@ public async Task<IActionResult> Details(int? id)
         }
 
         // POST: Section/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(SectionCreateViewModel section)
+        public async Task<IActionResult> Create(int proyectID, SectionCreateViewModel section)
         {
             if (ModelState.IsValid)
             {
@@ -87,14 +85,14 @@ public async Task<IActionResult> Details(int? id)
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index),new { ProyectId = section.proyectId });
             }
-            //ViewData["ProyectId"] = new SelectList(_context.Proyects, "Id", "Description", section.ProyectId);
+
+            ViewData["currentProyect"] = proyectID;
             return View(section);
         }
 
         // GET: Section/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            //ViewData["currentSection"] = id;
             if (id == null)
             {
                 return BadRequest();
@@ -104,7 +102,8 @@ public async Task<IActionResult> Details(int? id)
             {
                 return NotFound();
             }
-            //ViewData["ProyectId"] = new SelectList(_context.Proyects, "Id", "Description", section.ProyectId);
+
+            ViewData["currentProyect"] = section.ProyectId;
             return View(new SectionEditViewModel()
             {
                 Id = section.Id,
@@ -114,8 +113,6 @@ public async Task<IActionResult> Details(int? id)
         }
 
         // POST: Section/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, SectionEditViewModel model)
@@ -151,7 +148,8 @@ public async Task<IActionResult> Details(int? id)
                 }
                 return RedirectToAction(nameof(Details), new {section.Id});
             }
-            //ViewData["ProyectId"] = new SelectList(_context.Proyects, "Id", "Description", section.ProyectId);
+
+            ViewData["currentProyect"] = section.ProyectId;
             return View(model);
         }
 
@@ -170,6 +168,7 @@ public async Task<IActionResult> Details(int? id)
                 return NotFound();
             }
 
+            ViewData["currentProyect"] = section.ProyectId;
             return View(section);
         }
 
