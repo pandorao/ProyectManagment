@@ -43,10 +43,37 @@ namespace ProyectManagement.Controllers
             }
 
             var proyect = await _context.Proyects
-                .SingleOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (proyect == null)
             {
                 return NotFound();
+            }
+
+            var userId = _userManager.GetUserId(User);
+            if (userId == null)
+            {
+                return BadRequest();
+            }
+
+            var contributor = await _context.Contributors.FirstOrDefaultAsync(c => c.ProyectId == proyect.Id && c.ApplicationUserId == userId);
+            if (contributor == null)
+            {
+                ViewBag.DelayedJobs = new List<Job>();
+            }
+            else
+            {
+                ViewBag.DelayedJobs = (from assignment in _context.Assignments.Where(a => a.ContributorId == contributor.Id)
+                                       join job in _context.Jobs.Include(p => p.Section).Where(p => p.Section.ProyectId == proyect.Id && ((DateTime.Now > p.endDate && p.State == enumState.Active) || p.State == enumState.Delayed))
+                                         on assignment.jobId equals job.Id
+                                       select new Job()
+                                       {
+                                           endDate = job.endDate,
+                                           Name = job.Name,
+                                           Id = job.Id,
+                                           sectionId = job.sectionId,
+                                           startDate = job.startDate,
+                                           State = job.State
+                                       }).ToList();
             }
 
             return View(proyect);
