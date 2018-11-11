@@ -130,6 +130,13 @@ namespace ProyectManagement.Controllers
             return View(job);
         }
 
+        // GET: Job/Planner/5
+        public IActionResult Planner(int? proyectId)
+        {
+            ViewData["CurrentProyect"] = proyectId;
+            return View();
+        }
+
         // POST: Job/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
