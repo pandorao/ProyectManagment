@@ -58,11 +58,10 @@ namespace ProyectManagement.Controllers
 				}
 				else
 				{
-					ViewData["Error"]=1;
-					return View();
+					ViewData["CurrentProyect"] = proyectID;
+					ViewData["sectionId"] = new SelectList(_context.Sections.Where(s => s.ProyectId == proyectID), "Id", "Name", job.sectionId);
+					return View(job);
 				}
-				//job = t1;
-				
             }
 
             ViewData["CurrentProyect"] = proyectID;
